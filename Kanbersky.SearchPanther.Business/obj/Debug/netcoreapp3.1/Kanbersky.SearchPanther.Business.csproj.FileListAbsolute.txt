@@ -1,0 +1,16 @@
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.deps.json
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Entities.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Entities.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.csprojAssemblyReference.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.AssemblyInfoInputs.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.AssemblyInfo.cs
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.csproj.CopyComplete
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Business\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Business.csproj.CoreCompileInputs.cache

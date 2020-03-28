@@ -1,0 +1,14 @@
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.deps.json
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Entities.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Entities.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.csprojAssemblyReference.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.AssemblyInfoInputs.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.AssemblyInfo.cs
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.csproj.CopyComplete
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.DAL\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.DAL.csproj.CoreCompileInputs.cache

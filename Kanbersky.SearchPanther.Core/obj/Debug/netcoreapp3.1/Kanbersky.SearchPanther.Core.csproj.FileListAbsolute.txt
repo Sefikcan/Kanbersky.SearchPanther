@@ -1,0 +1,9 @@
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.deps.json
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\bin\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.AssemblyInfoInputs.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.AssemblyInfo.cs
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.dll
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.pdb
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.csprojAssemblyReference.cache
+D:\WorkSpaces\Microservices\Kanbersky.SearchPanther\Kanbersky.SearchPanther.Core\obj\Debug\netcoreapp3.1\Kanbersky.SearchPanther.Core.csproj.CoreCompileInputs.cache
