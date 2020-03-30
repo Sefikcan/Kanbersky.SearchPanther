@@ -50,7 +50,8 @@ namespace Kanbersky.SearchPanther.Api.Controllers
                 CategoryId = x.CategoryId,
                 ProductName = x.ProductName,
                 CategoryName = x.CategoryName,
-                QuantityPerUnit = x.QuantityPerUnit
+                QuantityPerUnit = x.QuantityPerUnit,
+                UnitPrice = x.UnitPrice
             });
 
             var result = await _elasticSearchService.CreateIndexAsync();
@@ -81,7 +82,8 @@ namespace Kanbersky.SearchPanther.Api.Controllers
                 CategoryId = x.CategoryId,
                 ProductName = x.ProductName,
                 CategoryName = x.CategoryName,
-                QuantityPerUnit = x.QuantityPerUnit
+                QuantityPerUnit = x.QuantityPerUnit,
+                UnitPrice = x.UnitPrice
             });
 
             var result = await _elasticSearchService.CreateIndexAsync();
@@ -317,6 +319,111 @@ namespace Kanbersky.SearchPanther.Api.Controllers
         public async Task<IActionResult> SearchWithMultiMatch(string term)
         {
             var result = await _elasticSearchService.SearchMultiMatchMultiColumn(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        #endregion
+
+        #region nested bool query
+
+        /// <summary>
+        /// İlgili Term'e göre arama yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search-nestedbool/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchWithNestedBool(string term)
+        {
+            var result = await _elasticSearchService.SearchNestedBoolQuery(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        #endregion
+
+        #region analyzer operations
+
+        /// <summary>
+        /// Sıralama İşlemi yapar
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sort-desc")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Sorting()
+        {
+            var result = await _elasticSearchService.SortQuery();
+            return StatusCode(result.StatusCode, result);
+        }
+
+        #endregion
+
+        #region other operations
+
+        /// <summary>
+        /// İlgili Term'e göre arama yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search-fuziness/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchWithFuzzines(string term)
+        {
+            var result = await _elasticSearchService.SearchWithFuziness(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// İlgili Term'e göre arama yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search-prefix/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchWithPrefix(string term)
+        {
+            var result = await _elasticSearchService.SearchWitPrefix(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// İlgili Term'e göre arama yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search-wildcard/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchWithWildcard(string term)
+        {
+            var result = await _elasticSearchService.SearchWitWildcard(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        #endregion
+
+        #region autocomplete operations
+
+        /// <summary>
+        /// İlgili Term'e göre autocomplete işlemini yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("basic-autocomplete/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> BasicAutoComplete(string term)
+        {
+            var result = await _elasticSearchService.AutoCompleteEasy(term);
             return StatusCode(result.StatusCode, result);
         }
 

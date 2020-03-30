@@ -13,5 +13,7 @@
         public string CategoryName { get; set; }
 
         public string QuantityPerUnit { get; set; }
+
+        public decimal UnitPrice { get; set; }
     }
 }

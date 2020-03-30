@@ -40,6 +40,18 @@ namespace Kanbersky.SearchPanther.Business.Abstract
         Task<IDataResult<List<ProductCategoryResponse>>> SearchMatchPhraseSingleColumn(string term);
 
         Task<IDataResult<List<ProductCategoryResponse>>> SearchMultiMatchMultiColumn(string term);
+
+        Task<IDataResult<List<ProductCategoryResponse>>> SortQuery();
+
+        Task<IDataResult<List<ProductCategoryResponse>>> SearchNestedBoolQuery(string term);
+
+        Task<IDataResult<List<ProductCategoryResponse>>> SearchWithFuziness(string term);
+
+        Task<IDataResult<List<ProductCategoryResponse>>> SearchWitPrefix(string term);
+
+        Task<IDataResult<List<ProductCategoryResponse>>> SearchWitWildcard(string term);
+
+        Task<IDataResult<List<ProductCategoryResponse>>> AutoCompleteEasy(string term);
     }
 
 }

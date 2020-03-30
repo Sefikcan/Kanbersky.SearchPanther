@@ -48,8 +48,32 @@ namespace Kanbersky.SearchPanther.Business.Concrete
 
         // Her sorguya Profile eklersen hangi sorgunun yavaş olduğunu görebilirsin.
 
+        // filters: verilere yes/no sorularını sorar.
+        // queries: sorgu ile alakalı verileri döndürür.
+        // filters daha hızlıdır ve cache'lenebilir.
+
+        // Sort(sıralama) işlemi full-text search işlemlerinde uygulanmamalıdır.Eğer uygulamak istenirse
+        // mapping işleminde revize'ye gidilmesi gerekir.mappings.properties.filtrelenmek istenen alan.type:text.fields.raw.type:keyword
+
+        public async Task<IDataResult<List<ProductCategoryResponse>>> SortQuery()
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .Query(q => q
+            .MatchAll())
+            .Sort(s=>s
+            .Descending(x=>x.UnitPrice)));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("Kayıt Bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
         #endregion
-        
+
         #region crud methods
 
         /// <summary>
@@ -245,7 +269,7 @@ namespace Kanbersky.SearchPanther.Business.Concrete
         /// <param name="id"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public async Task<IResult> UpSertDocument<T>(int id,T entity) where T : class
+        public async Task<IResult> UpSertDocument<T>(int id, T entity) where T : class
         {
             var response = await _elasticClient.UpdateAsync(DocumentPath<T>
                 .Id(id),
@@ -329,7 +353,7 @@ namespace Kanbersky.SearchPanther.Business.Concrete
         }
 
         /// <summary>
-        /// Match tam eşleme ister.Örnek vermek gerekirse Data Şefik Can olsun.Şefik ve Can query'leri için Şefik Can datası dönecektir.Ancak Şef yazdığınızda data dönmeyecektir.
+        /// Match tam eşleme ister.Or mantığı ile çalışır.Şefik Can için => Şefik OR Can şeklinde arama yapacaktır.Gelen term'in sırası önemli değildir.
         /// </summary>
         /// <param name="term"></param>
         /// <returns></returns>
@@ -349,7 +373,7 @@ namespace Kanbersky.SearchPanther.Business.Concrete
                 return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
             }
 
-            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!",null, StatusCodes.Status404NotFound);
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
         }
 
         /// <summary>
@@ -370,7 +394,7 @@ namespace Kanbersky.SearchPanther.Business.Concrete
             .Size(10)
             .Query(q => q
             .Term(t => t
-            .Field(p=>p.ProductName)
+            .Field(p => p.ProductName)
             .Value(term.ToLower()))));
 
             if (response.IsValid && response.Documents.Any())
@@ -438,7 +462,8 @@ namespace Kanbersky.SearchPanther.Business.Concrete
         }
 
         /// <summary>
-        /// MatchPhrase'de aranan kelime veya cümlenin bire bir eşleşmesi gerekmektedir.
+        /// MatchPhrase'de aranan kelime veya cümlenin bire bir eşleşmesi gerekmektedir.Gelen term'in sırası önemlidir.
+        /// Arama işleminde slop kullanarak term işlemini genişletebilirsiniz.Örnek vermek gerekirse Şefik Can üzerinden işlem yapalım.İlgili cümle listesi Şefik Can Gol,Şefik Gol Can,Gol Şefik Can sonuçları için slop değerini 2 yaparsak bu listenin tümü dönecektir.Slop değerinin 3 den fazla olması farklı sonuçlara sebep vereceği için 2 değerinden fazla set edilmemesi gerekir.
         /// </summary>
         /// <param name="term"></param>
         /// <returns></returns>
@@ -505,6 +530,144 @@ namespace Kanbersky.SearchPanther.Business.Concrete
         * should=> Yan tümce (sorgu) eşleşen belgede görünmelidir. Zorunlu veya filtre yan tümcesi olmayan bir boole sorgusunda, bir veya daha fazla yan tümce, bir belgeyle eşleşmelidir. Eşleşmesi gereken minimum koşul cümlesi sayısı minimum_should_match parametresi kullanılarak ayarlanabilir.
         * must_not=> Yan tümce (sorgu) eşleşen belgelerde görünmemelidir.*/
 
+        /// <summary>
+        /// Nested query sorguları ile productname alanında sorgu yaptık ve dönen data'ların unitprice'ları 5'den büyük olanları response'dan geriye döndürdük
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> SearchNestedBoolQuery(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .Bool(b => b
+            .Must(m => m
+            .Term(t => t.ProductName, term))
+            .Filter(f => f
+            .Range(r => r
+            .Field(f => f.UnitPrice)
+            .GreaterThanOrEquals(5))
+            ))));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
+        #endregion
+
+        #region other informations
+
+        /// <summary>
+        /// Fuziness Hata payını engeller.Burada editdistance içine verdiğimiz değere göre hata payı vermiş oluyoruz
+        /// 0 => 1-2
+        /// 1 => 3-5
+        /// 2 => anlamlı her şey için
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> SearchWithFuziness(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .Fuzzy(f => f
+            .Field(ff => ff.ProductName)
+            .Value(term)
+            .Fuzziness(Fuzziness.EditDistance(1))
+            )));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
+        /// <summary>
+        /// Prefix verilen term ile başlayan data'ları getirir
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> SearchWitPrefix(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .Prefix(p => p.ProductName, term)));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
+        /// <summary>
+        /// Wildcard verilen term ile başlayan data'ları getirir.
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> SearchWitWildcard(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .Wildcard(p => p.ProductName, $"{term}*")));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
+        #endregion
+
+        #region autcomplete
+
+        /// <summary>
+        ///  Autocomplete işlemler için match_phrase_prefix'i kullanabilirsin(slop:10).En basit önerme işlemi.Performanslı Değil !!!
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> AutoCompleteEasy(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .MatchPhrasePrefix(m => m
+            .Field(f => f.ProductName)
+            .Query(term)
+            .Slop(10))));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
+        // Autocomplete işlemleri için belirli özellikler var
+        // unigram [s,t,a,r]
+        // bigram [st,ta,ar]
+        // trigram [sta,tar]
+        // 4-gram  [star]
+        // n-gram => her search term'in başında oluşturulur
+        //TODO:Buraya autocomplete ile ilgili bilgilere devam edeceksin
+ 
         #endregion
     }
 

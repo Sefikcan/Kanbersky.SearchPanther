@@ -43,7 +43,8 @@ namespace Kanbersky.SearchPanther.Business.Concrete
                                       CategoryId = c.Id,
                                       p.ProductName,
                                       c.CategoryName,
-                                      p.QuantityPerUnit
+                                      p.QuantityPerUnit,
+                                      p.UnitPrice
                                   };
 
             var ProductCategoryResponse = productCategory.Select(x => new ProductCategoryResponse
@@ -52,7 +53,8 @@ namespace Kanbersky.SearchPanther.Business.Concrete
                 CategoryId = x.CategoryId,
                 ProductName = x.ProductName,
                 CategoryName = x.CategoryName,
-                QuantityPerUnit = x.QuantityPerUnit
+                QuantityPerUnit = x.QuantityPerUnit,
+                UnitPrice = x.UnitPrice
             });
             return ProductCategoryResponse.ToList();
         }
