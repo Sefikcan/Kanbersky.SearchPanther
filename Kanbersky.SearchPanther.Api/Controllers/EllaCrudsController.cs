@@ -427,6 +427,53 @@ namespace Kanbersky.SearchPanther.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        /// <summary>
+        /// Autocomplete için index oluşturmamızı sağlar
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("create-index-autocomplete")]
+        [ProducesResponseType(typeof(ProductCategoryResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateAutoCompleteIndex()
+        {
+            var entity = _productService.ProductCategoryResponses();
+            var searchResponse = entity.Select(x => new ProductCategoryResponse
+            {
+                Id = x.ProductId,
+                ProductId = x.ProductId,
+                CategoryId = x.CategoryId,
+                ProductName = x.ProductName,
+                CategoryName = x.CategoryName,
+                QuantityPerUnit = x.QuantityPerUnit,
+                UnitPrice = x.UnitPrice
+            });
+
+            var result = await _elasticSearchService.CreateIndexWithAnalyzersAsync();
+            if (result.Success)
+            {
+                var documentResult = await _elasticSearchService.CreateMultiDocumentAsync(searchResponse.ToList());
+                return StatusCode(documentResult.StatusCode, documentResult);
+            }
+
+            return StatusCode(result.StatusCode, result);
+        }
+
+        /// <summary>
+        /// İlgili term'e göre arama yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("autocomplete-match-analyzers/{term}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchWithAutoCompleteAnalyzers(string term)
+        {
+            var result = await _elasticSearchService.AutoCompleteWithAnalyzers(term);
+            return StatusCode(result.StatusCode, result);
+        }
+
         #endregion
     }
 }

@@ -52,6 +52,10 @@ namespace Kanbersky.SearchPanther.Business.Abstract
         Task<IDataResult<List<ProductCategoryResponse>>> SearchWitWildcard(string term);
 
         Task<IDataResult<List<ProductCategoryResponse>>> AutoCompleteEasy(string term);
+
+        Task<IDataResult<BaseEllaResponse>> CreateIndexWithAnalyzersAsync();
+
+        Task<IDataResult<List<ProductCategoryResponse>>> AutoCompleteWithAnalyzers(string term);
     }
 
 }

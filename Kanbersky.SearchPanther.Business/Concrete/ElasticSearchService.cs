@@ -61,8 +61,8 @@ namespace Kanbersky.SearchPanther.Business.Concrete
             .Index(ElasticSearchConstants.DefaultIndexName)
             .Query(q => q
             .MatchAll())
-            .Sort(s=>s
-            .Descending(x=>x.UnitPrice)));
+            .Sort(s => s
+            .Descending(x => x.UnitPrice)));
 
             if (response.IsValid && response.Documents.Any())
             {
@@ -666,8 +666,90 @@ namespace Kanbersky.SearchPanther.Business.Concrete
         // trigram [sta,tar]
         // 4-gram  [star]
         // n-gram => her search term'in başında oluşturulur
-        //TODO:Buraya autocomplete ile ilgili bilgilere devam edeceksin
- 
+
+        /// <summary>
+        /// Autcomplete işlemlerinde kullanmak için elasticte oluşturduğumuz index üzerinde işlemler yapıldı.Burada n-gram filters kullanıldı.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IDataResult<BaseEllaResponse>> CreateIndexWithAnalyzersAsync()
+        {
+            //İlgili IndexName'ine göre kayıt kontrolü yapılır
+            var indexIsExists = await _elasticClient.Indices.ExistsAsync(ElasticSearchConstants.DefaultIndexName);
+            if (indexIsExists.Exists)
+            {
+                //Alias ismine göre index'leri listeler
+                var alias2IndexList = await _elasticClient.GetIndicesPointingToAliasAsync(ElasticSearchConstants.DefaultIndexName);
+                if (alias2IndexList.Count() > 0)
+                {
+                    foreach (var item in alias2IndexList)
+                    {
+                        //Eğer kayıt varsa index silinir.
+                        await _elasticClient.Indices.DeleteAsync(item);
+                    }
+                }
+            }
+
+            //Yeni index için yeni indexName verilir.
+            var newIndexName = ElasticSearchConstants.DefaultIndexName + +DateTime.Now.Ticks;
+
+            var filterArray = new string[] { "lowercase", "autocomplete_filter" };
+
+            CreateIndexResponse createIndex = await _elasticClient.Indices.CreateAsync(newIndexName,
+                ss => ss.Index(newIndexName)
+                .Settings(s => s
+                .Analysis(a => a
+                .TokenFilters(f => f
+                .EdgeNGram("autocomplete_filter", s => s
+                .MinGram(1).MaxGram(20)))
+                .Analyzers(al => al
+                .Custom("autocomplete", t => t
+                 .Tokenizer("standard")
+                 .Filters(filterArray)))))
+                .Map<BaseEllaResponse>(r => r
+                .AutoMap()
+                .Properties(p=>p
+                .Text(t=>t
+                .Name("productName")
+                .Analyzer("autocomplete")))
+                ));
+
+            //Acknowledged değer true ise index'imizi başarıyla oluşturduk demektir.
+            if (createIndex.Acknowledged)
+            {
+                //Index'imiz başarıyla oluştuktan sonra alias'ımızı ekliyoruz
+                await _elasticClient.Indices.BulkAliasAsync(ba => ba.Add(a => a.Index(newIndexName).Alias(ElasticSearchConstants.DefaultIndexName)));
+                return new SuccessDataResult<BaseEllaResponse>(new BaseEllaResponse { IndexName = newIndexName }, StatusCodes.Status200OK);
+            }
+
+            //olası bir hata durumunda belirlediğimiz exception formatında hata fırlatıyoruz.
+            throw new ElasticSearchException($"Create Index {ElasticSearchConstants.DefaultIndexName} failed : :" + createIndex.ServerError.Error.Reason);
+        }
+
+        /// <summary>
+        /// Kurduğumuz analyzer'a göre autocomplete işlemini yapar
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
+        public async Task<IDataResult<List<ProductCategoryResponse>>> AutoCompleteWithAnalyzers(string term)
+        {
+            var response = await _elasticClient.SearchAsync<ProductCategoryResponse>(s => s
+            .Index(ElasticSearchConstants.DefaultIndexName)
+            .From(0)
+            .Query(q => q
+            .Match(m => m
+            .Field(f => f.ProductName)
+            .Query(term)
+            .Analyzer("standard"))
+            ));
+
+            if (response.IsValid && response.Documents.Any())
+            {
+                return new SuccessDataResult<List<ProductCategoryResponse>>(response.Documents.ToList(), StatusCodes.Status200OK);
+            }
+
+            return new ErrorDataResult<List<ProductCategoryResponse>>("İlgili search term'e göre data bulunamadı!", null, StatusCodes.Status404NotFound);
+        }
+
         #endregion
     }
 
